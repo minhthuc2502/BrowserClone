@@ -30,6 +30,7 @@ public slots:
     void returnHome();
     void updateURL(QUrl);
     void applySearchText(); // this slot will take content in search bar and apply to web page
+    void updateLoadProgress(int); // update load progress on search bar
 };
 
 #endif // MAINWINDOW_H
