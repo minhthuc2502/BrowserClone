@@ -20,17 +20,24 @@ private:
     QMenu *helpMenu;
     QAction *helpAction;
 
-    QWebView *w_webpage;
+    QTabWidget *webTabs;
+    QWebView *c_webpage;        // current web tab
+
+    void addNewTab(QWebView *);
 public:
     mainWindow();
     void addWindowActions();
     void addWindowMenu();
     void addCentralWindow();
-public slots:
+private slots:
     void returnHome();
-    void updateURL(QUrl);
-    void applySearchText(); // this slot will take content in search bar and apply to web page
-    void updateLoadProgress(int); // update load progress on search bar
+    void updateURL(QUrl);           // update url to search bar
+    void applySearchText();         // this slot will take content in search bar and apply to web page
+    void updateLoadProgress(int);   // update load progress on search bar
+    void updateTitlePage();         // update title of web page on tab
+public slots:
+    void setCurrentWebPage();       // update current tab and connection of actions
+    void addPage(int index);        // add tab for searching
 };
 
 #endif // MAINWINDOW_H
