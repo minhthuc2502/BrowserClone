@@ -123,7 +123,12 @@ void mainWindow::updateURL(QUrl currentUrl) {
 }
 
 void mainWindow::applySearchText() {
-    c_webpage->load(QUrl("https://www.google.com/search?q=" + searchBar->text()));
+    QUrl url = QUrl::fromUserInput(searchBar->text());
+    if (url.topLevelDomain().isEmpty())
+        c_webpage->load(QUrl("https://www.google.com/search?q=" + searchBar->text()));
+    else {
+        c_webpage->load(url);
+    }
 }
 
 void mainWindow::updateLoadProgress(int pr) {
