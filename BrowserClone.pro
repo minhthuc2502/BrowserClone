@@ -6,3 +6,5 @@ SOURCES += \
 
 HEADERS += \
     mainWindow.h
+
+FORMS +=

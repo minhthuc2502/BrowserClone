@@ -52,9 +52,10 @@ void mainWindow::addWindowMenu() {
     helpMenu = menuBar()->addMenu(tr("&Help"));
     // add Actions in menu
     // file menu
-    fileMenu->addAction(tr("Open tab"));
-    fileMenu->addAction(tr("Close Tab"));
+    QAction *openTabAction = fileMenu->addAction(tr("Open tab"));
+    QAction *closeTabAction = fileMenu->addAction(tr("Close Tab"));
     QAction* exitAction = fileMenu->addAction(tr("Exit"));
+    exitAction->setShortcut(QKeySequence("Alt+F4"));
     // actions menu
     ActionsMenu->addAction(w_previous);
     ActionsMenu->addAction(w_next);
@@ -67,6 +68,8 @@ void mainWindow::addWindowMenu() {
     helpMenu->addAction(helpAction);
     // add connection for menu bar
     connect(exitAction, SIGNAL(triggered(bool)), qApp, SLOT(quit()));
+    connect(openTabAction, SIGNAL(triggered(bool)), this, SLOT(addPage()));
+    connect(closeTabAction, SIGNAL(triggered(bool)), this, SLOT(closeCurrentPage()));
 }
 
 void mainWindow::addCentralWindow() {
@@ -99,6 +102,7 @@ void mainWindow::setCurrentWebPage() {
     connect(c_webpage, SIGNAL(urlChanged(QUrl)), this, SLOT(updateURL(QUrl)));
     connect(searchBar, SIGNAL(returnPressed()), this, SLOT(applySearchText()));
     connect(c_webpage,SIGNAL(loadProgress(int)), this, SLOT(updateLoadProgress(int)));
+    connect(c_webpage, SIGNAL(loadFinished(bool)), this, SLOT(updateFinishProgress()));
     connect(c_webpage, SIGNAL(loadProgress(int)), this, SLOT(updateTitlePage()));
 }
 
@@ -108,10 +112,35 @@ void mainWindow::addNewTab(QWebView *tab) {
     QVBoxLayout* tabLayout = new QVBoxLayout();
     tabLayout->addWidget(tab);
     TabWidget->setLayout(tabLayout);
-    if (webTabs->count() >= 1)
+
+    QTabBar *tabBarStyle = webTabs->tabBar();
+    QPushButton *closeTabButton = new QPushButton("X");
+    QString styleCloseButton = "QPushButton {"
+                                   "border-width: 0.1px;"
+                                   "border-style: solid;"
+                                   "border-radius: 7px;"
+                                   "background-color: rgba( 255, 255, 255, 0% );"
+                                   "max-width: 14px;"
+                                   "max-height: 14px;"
+                                   "min-width: 14px;"
+                                   "min-height: 14px;"
+                                   "background-position: center"
+                               "}"
+                               "QPushButton:hover {"
+                                   "background-color: #D8D8D8;"
+                               "}";
+    closeTabButton->setStyleSheet(styleCloseButton);
+
+    if (webTabs->count() >= 1) {
         webTabs->insertTab(webTabs->count() - 1, TabWidget, "New Tab");
-    else if (webTabs->count() == 0)
+        tabBarStyle->setTabButton(webTabs->count() - 2, QTabBar::RightSide, closeTabButton);
+    }
+    else if (webTabs->count() == 0) {
         webTabs->addTab(TabWidget, "New Tab");
+        tabBarStyle->setTabButton(webTabs->count() - 1, QTabBar::RightSide, closeTabButton);
+    }
+
+    connect(closeTabButton, SIGNAL(clicked(bool)), this, SLOT(closeCurrentPage()));
 }
 
 void mainWindow::returnHome() {
@@ -148,12 +177,44 @@ void mainWindow::updateLoadProgress(int pr) {
     searchBar->setPalette(*searchPalette);
 }
 
+void mainWindow::updateFinishProgress() {
+    QPalette* searchPalette = new QPalette();   // contain color defined in gradient
+    QRect rs = searchBar->rect();
+    // gradient using to set color for search bar
+    QLinearGradient *gradient = new QLinearGradient(rs.topLeft(), rs.topRight());
+    gradient->setColorAt(0, QColor("#FFFFFF"));
+    gradient->setColorAt(1, QColor("#FFFFFF"));
+    searchPalette->setBrush(QPalette::Base, QBrush(*gradient));
+    searchBar->setPalette(*searchPalette);
+}
+
 void mainWindow::addPage(int index) {
     if (index == (webTabs->count() - 1)) {
         QWebView *newWebpage = new QWebView();
         addNewTab(newWebpage);
     }
     else return;
+}
+
+void mainWindow::addPage() {
+    QWebView *newWebpage = new QWebView();
+    addNewTab(newWebpage);
+}
+
+void mainWindow::closeCurrentPage() {
+    if (webTabs->currentIndex() == 0) {
+        if (webTabs->count() == 2) {
+            qApp->quit();
+            return;
+        }
+        else {
+            webTabs->setCurrentIndex(webTabs->currentIndex() + 1);
+            webTabs->removeTab(webTabs->currentIndex() - 1);
+        }
+    } else {
+        webTabs->setCurrentIndex(webTabs->currentIndex() - 1);
+        webTabs->removeTab(webTabs->currentIndex() + 1);
+    }
 }
 
 void mainWindow::updateTitlePage() {

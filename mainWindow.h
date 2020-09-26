@@ -25,7 +25,7 @@ private:
 
     void addNewTab(QWebView *);
 public:
-    mainWindow();
+    explicit mainWindow();
     void addWindowActions();
     void addWindowMenu();
     void addCentralWindow();
@@ -34,10 +34,13 @@ private slots:
     void updateURL(QUrl);           // update url to search bar
     void applySearchText();         // this slot will take content in search bar and apply to web page
     void updateLoadProgress(int);   // update load progress on search bar
+    void updateFinishProgress();    // update style search bar when load finish
     void updateTitlePage();         // update title of web page on tab
 public slots:
     void setCurrentWebPage();       // update current tab and connection of actions
     void addPage(int index);        // add tab for searching
+    void addPage();                 // add tab for searching using for action open tab in file menu
+    void closeCurrentPage();               // close current tab
 };
 
 #endif // MAINWINDOW_H
