@@ -70,6 +70,7 @@ void mainWindow::addWindowMenu() {
     connect(exitAction, SIGNAL(triggered(bool)), qApp, SLOT(quit()));
     connect(openTabAction, SIGNAL(triggered(bool)), this, SLOT(addPage()));
     connect(closeTabAction, SIGNAL(triggered(bool)), this, SLOT(closeCurrentPage()));
+    connect(helpAction, SIGNAL(triggered(bool)), this, SLOT(addHelpTab()));
 }
 
 void mainWindow::addCentralWindow() {
@@ -92,18 +93,19 @@ void mainWindow::addCentralWindow() {
 }
 
 void mainWindow::setCurrentWebPage() {
-    c_webpage = webTabs->currentWidget()->findChild<QWebView *>();
-    // set connnect for actions
-    connect(w_previous, SIGNAL(triggered(bool)), c_webpage, SLOT(back()));
-    connect(w_next, SIGNAL(triggered(bool)), c_webpage, SLOT(forward()));
-    connect(w_stop, SIGNAL(triggered(bool)), c_webpage, SLOT(stop()));
-    connect(w_refresh, SIGNAL(triggered(bool)), c_webpage, SLOT(reload()));
-    connect(w_home, SIGNAL(triggered(bool)), this, SLOT(returnHome()));
-    connect(c_webpage, SIGNAL(urlChanged(QUrl)), this, SLOT(updateURL(QUrl)));
-    connect(searchBar, SIGNAL(returnPressed()), this, SLOT(applySearchText()));
-    connect(c_webpage,SIGNAL(loadProgress(int)), this, SLOT(updateLoadProgress(int)));
-    connect(c_webpage, SIGNAL(loadFinished(bool)), this, SLOT(updateFinishProgress()));
-    connect(c_webpage, SIGNAL(loadProgress(int)), this, SLOT(updateTitlePage()));
+    if ((c_webpage = webTabs->currentWidget()->findChild<QWebView *>()) != 0) {
+        // set connnect for actions
+        connect(w_previous, SIGNAL(triggered(bool)), c_webpage, SLOT(back()));
+        connect(w_next, SIGNAL(triggered(bool)), c_webpage, SLOT(forward()));
+        connect(w_stop, SIGNAL(triggered(bool)), c_webpage, SLOT(stop()));
+        connect(w_refresh, SIGNAL(triggered(bool)), c_webpage, SLOT(reload()));
+        connect(w_home, SIGNAL(triggered(bool)), this, SLOT(returnHome()));
+        connect(c_webpage, SIGNAL(urlChanged(QUrl)), this, SLOT(updateURL(QUrl)));
+        connect(searchBar, SIGNAL(returnPressed()), this, SLOT(applySearchText()));
+        connect(c_webpage,SIGNAL(loadProgress(int)), this, SLOT(updateLoadProgress(int)));
+        connect(c_webpage, SIGNAL(loadFinished(bool)), this, SLOT(updateFinishProgress()));
+        connect(c_webpage, SIGNAL(loadProgress(int)), this, SLOT(updateTitlePage()));
+    }
 }
 
 void mainWindow::addNewTab(QWebView *tab) {
@@ -139,7 +141,6 @@ void mainWindow::addNewTab(QWebView *tab) {
         webTabs->addTab(TabWidget, "New Tab");
         tabBarStyle->setTabButton(webTabs->count() - 1, QTabBar::RightSide, closeTabButton);
     }
-
     connect(closeTabButton, SIGNAL(clicked(bool)), this, SLOT(closeCurrentPage()));
 }
 
@@ -215,6 +216,48 @@ void mainWindow::closeCurrentPage() {
         webTabs->setCurrentIndex(webTabs->currentIndex() - 1);
         webTabs->removeTab(webTabs->currentIndex() + 1);
     }
+}
+
+void mainWindow::addHelpTab() {
+    QWidget* TabWidget = new QWidget();
+    QVBoxLayout* tabLayout = new QVBoxLayout();
+    QTextBrowser *helpText = new QTextBrowser();
+    QString htmlText = "<!DOCTYPE html>"
+                       "<html>"
+                       "<body>"
+                       "<h1>My browser</h1>"
+                       "<p>This browser is reated by Qt framework. I used qt widgets and webkitwidget to build it.<br><br>"
+                       "I do it project to learn the most used widgets in Qt widgets.<br><br>"
+                       "This is the version 0.1.</p>"
+                       "</body>"
+                       "</html>";
+    helpText->setHtml(htmlText);
+    helpText->setFrameStyle(QFrame::NoFrame);
+    tabLayout->addWidget(helpText);
+    TabWidget->setLayout(tabLayout);
+
+    QTabBar *tabBarStyle = webTabs->tabBar();
+    QPushButton *closeTabButton = new QPushButton("X");
+    QString styleCloseButton = "QPushButton {"
+                                   "border-width: 0.1px;"
+                                   "border-style: solid;"
+                                   "border-radius: 7px;"
+                                   "background-color: rgba( 255, 255, 255, 0% );"
+                                   "max-width: 14px;"
+                                   "max-height: 14px;"
+                                   "min-width: 14px;"
+                                   "min-height: 14px;"
+                                   "background-position: center"
+                               "}"
+                               "QPushButton:hover {"
+                                   "background-color: #D8D8D8;"
+                               "}";
+    closeTabButton->setStyleSheet(styleCloseButton);
+    webTabs->insertTab(webTabs->count() - 1, TabWidget, "About browser");
+    webTabs->setCurrentIndex(webTabs->count() - 2);
+    tabBarStyle->setTabButton(webTabs->count() - 2, QTabBar::RightSide, closeTabButton);
+
+    connect(closeTabButton, SIGNAL(clicked(bool)), this, SLOT(closeCurrentPage()));
 }
 
 void mainWindow::updateTitlePage() {

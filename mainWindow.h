@@ -3,7 +3,7 @@
 
 #include <QtWidgets>
 #include <QtWebKitWidgets>
-
+#include <QTextBrowser>
 class mainWindow : public QMainWindow {
     Q_OBJECT
 private:
@@ -40,7 +40,8 @@ public slots:
     void setCurrentWebPage();       // update current tab and connection of actions
     void addPage(int index);        // add tab for searching
     void addPage();                 // add tab for searching using for action open tab in file menu
-    void closeCurrentPage();               // close current tab
+    void closeCurrentPage();        // close current tab
+    void addHelpTab();              // add help tab
 };
 
 #endif // MAINWINDOW_H
