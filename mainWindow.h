@@ -23,12 +23,12 @@ private:
     QTabWidget *webTabs;
     QWebView *c_webpage;        // current web tab
 
-    void addNewTab(QWebView *);
-public:
-    explicit mainWindow();
     void addWindowActions();
     void addWindowMenu();
     void addCentralWindow();
+    void addNewTab(QWebView *);
+public:
+    explicit mainWindow();
 private slots:
     void returnHome();
     void updateURL(QUrl);           // update url to search bar
