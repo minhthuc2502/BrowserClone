@@ -4,6 +4,8 @@
 #include <QtWidgets>
 #include <QtWebKitWidgets>
 #include <QTextBrowser>
+#include <history.h>
+
 class mainWindow : public QMainWindow {
     Q_OBJECT
 private:
@@ -26,7 +28,7 @@ private:
     void addWindowActions();
     void addWindowMenu();
     void addCentralWindow();
-    void addNewTab(QWebView *);
+    void addNewTab(QWebView *, QString);
 public:
     explicit mainWindow();
 private slots:
@@ -42,6 +44,8 @@ public slots:
     void addPage();                 // add tab for searching using for action open tab in file menu
     void closeCurrentPage();        // close current tab
     void addHelpTab();              // add help tab
+    void showHistoryTab();          // show history
+    void callHistoryUrl(QListWidgetItem *);          // load old url
 };
 
 #endif // MAINWINDOW_H

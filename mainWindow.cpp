@@ -55,6 +55,7 @@ void mainWindow::addWindowMenu() {
     helpMenu = menuBar()->addMenu(tr("&Help"));
     // add Actions in menu
     // file menu
+    QAction *historyAction = fileMenu->addAction(tr("History"));
     QAction *openTabAction = fileMenu->addAction(tr("Open tab"));
     QAction *closeTabAction = fileMenu->addAction(tr("Close Tab"));
     QAction* exitAction = fileMenu->addAction(tr("Exit"));
@@ -74,6 +75,7 @@ void mainWindow::addWindowMenu() {
     connect(openTabAction, SIGNAL(triggered(bool)), this, SLOT(addPage()));
     connect(closeTabAction, SIGNAL(triggered(bool)), this, SLOT(closeCurrentPage()));
     connect(helpAction, SIGNAL(triggered(bool)), this, SLOT(addHelpTab()));
+    connect(historyAction, SIGNAL(triggered(bool)), this, SLOT(showHistoryTab()));
 }
 
 void mainWindow::addCentralWindow() {
@@ -81,7 +83,7 @@ void mainWindow::addCentralWindow() {
     webTabs = new QTabWidget();
     // add first tab
     c_webpage = new QWebView();
-    addNewTab(c_webpage);
+    addNewTab(c_webpage, "https://www.google.com/");
     // tab + to add more tab by users
     QWidget* plusPage = new QWidget();
     webTabs->addTab(plusPage, "+");
@@ -111,8 +113,8 @@ void mainWindow::setCurrentWebPage() {
     }
 }
 
-void mainWindow::addNewTab(QWebView *tab) {
-    tab->load(QUrl("https://www.google.com/"));
+void mainWindow::addNewTab(QWebView *tab, QString url) {
+    tab->load(QUrl(url));
     QWidget* TabWidget = new QWidget();
     QVBoxLayout* tabLayout = new QVBoxLayout();
     tabLayout->addWidget(tab);
@@ -182,6 +184,7 @@ void mainWindow::updateLoadProgress(int pr) {
 }
 
 void mainWindow::updateFinishProgress() {
+    // refresh color search bar
     QPalette* searchPalette = new QPalette();   // contain color defined in gradient
     QRect rs = searchBar->rect();
     // gradient using to set color for search bar
@@ -190,19 +193,22 @@ void mainWindow::updateFinishProgress() {
     gradient->setColorAt(1, QColor("#FFFFFF"));
     searchPalette->setBrush(QPalette::Base, QBrush(*gradient));
     searchBar->setPalette(*searchPalette);
+    // update history
+    if (webTabs->currentWidget()->findChild<QWebView *>() != nullptr)
+        history::addHistory(webTabs->currentWidget()->findChild<QWebView *>());
 }
 
 void mainWindow::addPage(int index) {
     if (index == (webTabs->count() - 1)) {
         QWebView *newWebpage = new QWebView();
-        addNewTab(newWebpage);
+        addNewTab(newWebpage, "https://www.google.com/");
     }
     else return;
 }
 
 void mainWindow::addPage() {
     QWebView *newWebpage = new QWebView();
-    addNewTab(newWebpage);
+    addNewTab(newWebpage, "https://www.google.com/");
 }
 
 void mainWindow::closeCurrentPage() {
@@ -245,7 +251,7 @@ void mainWindow::addHelpTab() {
                                    "background-color: #D8D8D8;"
                                "}";
     closeTabButton->setStyleSheet(styleCloseButton);
-    webTabs->insertTab(webTabs->count() - 1, TabWidget, "About browser");
+    webTabs->insertTab(webTabs->count() - 1, TabWidget, tr("History"));
     webTabs->setCurrentIndex(webTabs->count() - 2);
     tabBarStyle->setTabButton(webTabs->count() - 2, QTabBar::RightSide, closeTabButton);
 
@@ -253,5 +259,41 @@ void mainWindow::addHelpTab() {
 }
 
 void mainWindow::updateTitlePage() {
-    webTabs->setTabText(webTabs->currentIndex(), webTabs->currentWidget()->findChild<QWebView *>()->title());
+    if (webTabs->currentWidget()->findChild<QWebView *>() != nullptr) {
+        webTabs->setTabIcon(webTabs->currentIndex(), webTabs->currentWidget()->findChild<QWebView *>()->icon());
+        webTabs->setTabText(webTabs->currentIndex(), webTabs->currentWidget()->findChild<QWebView *>()->title());
+    }
+}
+
+void mainWindow::showHistoryTab() {
+    QTabBar *tabBarStyle = webTabs->tabBar();
+    QPushButton *closeTabButton = new QPushButton("X");
+    QString styleCloseButton = "QPushButton {"
+                                   "border-width: 0.1px;"
+                                   "border-style: solid;"
+                                   "border-radius: 7px;"
+                                   "background-color: rgba( 255, 255, 255, 0% );"
+                                   "max-width: 14px;"
+                                   "max-height: 14px;"
+                                   "min-width: 14px;"
+                                   "min-height: 14px;"
+                                   "background-position: center"
+                               "}"
+                               "QPushButton:hover {"
+                                   "background-color: #D8D8D8;"
+                               "}";
+    closeTabButton->setStyleSheet(styleCloseButton);
+    history *w_history = new history();
+    w_history->showHistory();
+    webTabs->insertTab(webTabs->count() - 1, w_history, "History");
+    webTabs->setCurrentIndex(webTabs->count() - 2);
+    tabBarStyle->setTabButton(webTabs->count() - 2, QTabBar::RightSide, closeTabButton);
+
+    connect(closeTabButton, SIGNAL(clicked(bool)), this, SLOT(closeCurrentPage()));
+    connect(w_history->getHistoryList(), SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(callHistoryUrl(QListWidgetItem*)));
+}
+
+void mainWindow::callHistoryUrl(QListWidgetItem *item) {
+    QWebView *oldPage = new QWebView();
+    addNewTab(oldPage, item->text());
 }
