@@ -111,6 +111,9 @@ void mainWindow::setCurrentWebPage() {
         connect(c_webpage, SIGNAL(loadFinished(bool)), this, SLOT(updateFinishProgress()));
         connect(c_webpage, SIGNAL(loadProgress(int)), this, SLOT(updateTitlePage()));
     }
+    else if (webTabs->tabText(webTabs->currentIndex()) == "History") {
+        c_webpage = nullptr;
+    }
 }
 
 void mainWindow::addNewTab(QWebView *tab, QString url) {
@@ -146,6 +149,7 @@ void mainWindow::addNewTab(QWebView *tab, QString url) {
         webTabs->addTab(TabWidget, "New Tab");
         tabBarStyle->setTabButton(webTabs->count() - 1, QTabBar::RightSide, closeTabButton);
     }
+
     connect(closeTabButton, SIGNAL(clicked(bool)), this, SLOT(closeCurrentPage()));
 }
 
@@ -291,6 +295,7 @@ void mainWindow::showHistoryTab() {
 
     connect(closeTabButton, SIGNAL(clicked(bool)), this, SLOT(closeCurrentPage()));
     connect(w_history->getHistoryList(), SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(callHistoryUrl(QListWidgetItem*)));
+    connect(w_refresh, SIGNAL(triggered(bool)), w_history, SLOT(refreshHistoryPage()));
 }
 
 void mainWindow::callHistoryUrl(QListWidgetItem *item) {

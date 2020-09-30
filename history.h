@@ -20,10 +20,11 @@ signals:
 public:
     history();
     static void addHistory(const QWebView *);
-    void showHistory();
     QListWidget *getHistoryList();
+    void showHistory();
 public slots:
     void removeHistory();
+    void refreshHistoryPage();
 };
 
 #endif // HISTORY_H
