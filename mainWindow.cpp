@@ -29,6 +29,9 @@ void mainWindow::addWindowActions() {
     w_changeTab = new QAction(tr("Change tab"));
     w_changeTab->setToolTip(tr("click to change tab"));
     w_changeTab->setIcon(QIcon(QApplication::applicationDirPath() + "/../BrowserClone/img/next.png"));
+    openFindText = new QAction(tr("Find text"));
+    openFindText->setToolTip(tr("Find bar"));
+    openFindText->setShortcut(QKeySequence(tr("Ctrl+F")));
     // set search bar on tool bar
     searchBar = new QLineEdit();
     searchBar->addAction(QIcon(QApplication::applicationDirPath() + "/../BrowserClone/img/google.png"), QLineEdit::LeadingPosition);
@@ -67,6 +70,7 @@ void mainWindow::addWindowMenu() {
     ActionsMenu->addAction(w_refresh);
     ActionsMenu->addAction(w_home);
     ActionsMenu->addAction(w_changeTab);
+    ActionsMenu->addAction(openFindText);
     // help menu
     helpAction = new QAction(QIcon(QApplication::applicationDirPath() + "/../BrowserClone/img/questionMark.png"), tr("About Browser Clone..."));
     helpMenu->addAction(helpAction);
@@ -110,6 +114,7 @@ void mainWindow::setCurrentWebPage() {
         connect(c_webpage,SIGNAL(loadProgress(int)), this, SLOT(updateLoadProgress(int)));
         connect(c_webpage, SIGNAL(loadFinished(bool)), this, SLOT(updateFinishProgress()));
         connect(c_webpage, SIGNAL(loadProgress(int)), this, SLOT(updateTitlePage()));
+        connect(openFindText, SIGNAL(triggered(bool)), this, SLOT(addFindBox()));
     }
     else if (webTabs->tabText(webTabs->currentIndex()) == "History") {
         c_webpage = nullptr;
@@ -301,4 +306,41 @@ void mainWindow::showHistoryTab() {
 void mainWindow::callHistoryUrl(QListWidgetItem *item) {
     QWebView *oldPage = new QWebView();
     addNewTab(oldPage, item->text());
+}
+
+void mainWindow::addFindBox() {
+    w_findBox = new findTextBox();
+    w_findBox->show();
+
+    connect(w_findBox, SIGNAL(textChanged(QString)), this, SLOT(findText(QString)));
+    connect(w_findBox->getNextTextButton(), SIGNAL(clicked(bool)), this, SLOT(findNextText()));
+    connect(w_findBox->getPreviousTextButton(), SIGNAL(clicked(bool)), this, SLOT(findPreviousText()));
+    connect(w_findBox->getCloseButton(), SIGNAL(clicked(bool)), this, SLOT(clearTextFound()));
+}
+
+void mainWindow::findText(QString text) {
+    textToFind = text;
+    if (textToFind == "") {
+        w_findBox->getNextTextButton()->setDisabled(true);
+        w_findBox->getPreviousTextButton()->setDisabled(true);
+    }
+    else {
+        w_findBox->getNextTextButton()->setEnabled(true);
+        w_findBox->getPreviousTextButton()->setEnabled(true);
+        c_webpage->findText("", QWebPage::HighlightAllOccurrences);
+        c_webpage->findText(textToFind, QWebPage::HighlightAllOccurrences);
+        c_webpage->findText(textToFind);
+    }
+}
+
+void mainWindow::findNextText() {
+    c_webpage->findText(textToFind, QWebPage::FindWrapsAroundDocument);
+}
+
+void mainWindow::findPreviousText() {
+    c_webpage->findText(textToFind, QWebPage::FindBackward | QWebPage::FindWrapsAroundDocument);
+}
+
+void mainWindow::clearTextFound() {
+    c_webpage->findText("", QWebPage::HighlightAllOccurrences);
 }

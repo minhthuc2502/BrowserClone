@@ -5,16 +5,20 @@
 #include <QtWebKitWidgets>
 #include <QTextBrowser>
 #include <history.h>
+#include <findTextBox.h>
 
 class mainWindow : public QMainWindow {
     Q_OBJECT
 private:
+    QString textToFind;
     QAction *w_previous;
     QAction *w_next;
     QAction *w_stop;
     QAction *w_refresh;
     QAction *w_home;
     QAction *w_changeTab;
+    QAction *openFindText;
+    findTextBox* w_findBox;
     QLineEdit *searchBar;
 
     QMenu *fileMenu;
@@ -38,6 +42,10 @@ private slots:
     void updateLoadProgress(int);   // update load progress on search bar
     void updateFinishProgress();    // update style search bar when load finish
     void updateTitlePage();         // update title of web page on tab
+    void findText(QString);         // call webView to find text
+    void findNextText();            // find next text in web page
+    void findPreviousText();        // find previous text in web page
+    void clearTextFound();          // clear text found when find box closed
 public slots:
     void setCurrentWebPage();       // update current tab and connection of actions
     void addPage(int index);        // add tab for searching
@@ -46,6 +54,7 @@ public slots:
     void addHelpTab();              // add help tab
     void showHistoryTab();          // show history
     void callHistoryUrl(QListWidgetItem *);          // load old url
+    void addFindBox();                // find text on page
 };
 
 #endif // MAINWINDOW_H

@@ -15,8 +15,6 @@ class history : public QWidget {
 private:
     QPushButton *clearHistory;
     QListWidget *historyList;
-signals:
-    void itemHistoryDoubleClicked(QListWidgetItem *);
 public:
     history();
     static void addHistory(const QWebView *);
