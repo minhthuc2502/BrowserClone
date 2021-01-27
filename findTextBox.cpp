@@ -10,15 +10,15 @@ findTextBox::findTextBox() : QWidget() {
                               "}";
     findTextLine = new QLineEdit();
     previousTextButton = new QPushButton();
-    previousTextButton->setIcon(QIcon(QApplication::applicationDirPath() + "/../BrowserClone/img/up-arrow.png"));
+    previousTextButton->setIcon(QIcon(QApplication::applicationDirPath() + "/../git/img/up-arrow.png"));
     previousTextButton->setDisabled(true);
     previousTextButton->setStyleSheet(styleFindButton);
     nextTextButton = new QPushButton();
-    nextTextButton->setIcon(QIcon(QApplication::applicationDirPath() + "/../BrowserClone/img/down-arrow.png"));
+    nextTextButton->setIcon(QIcon(QApplication::applicationDirPath() + "/../git/img/down-arrow.png"));
     nextTextButton->setDisabled(true);
     nextTextButton->setStyleSheet(styleFindButton);
     closeFindTextBox = new QPushButton();
-    closeFindTextBox->setIcon(QIcon(QApplication::applicationDirPath() + "/../BrowserClone/img/cancel.png"));
+    closeFindTextBox->setIcon(QIcon(QApplication::applicationDirPath() + "/../git/img/cancel.png"));
     closeFindTextBox->setStyleSheet(styleFindButton);
 
     QHBoxLayout *findTextLayout = new QHBoxLayout();

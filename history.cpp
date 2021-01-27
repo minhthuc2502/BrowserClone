@@ -11,8 +11,8 @@ void history::addHistory(const QWebView *current_webview) {
     QWebHistoryItem historyItem = current_webview->history()->currentItem();
     QString url = historyItem.url().toString();
     QString line;
-    QFile file(QApplication::applicationDirPath() + "/../BrowserClone/history.txt");
-    file.open(QIODevice::ReadOnly);
+    QFile file(QApplication::applicationDirPath() + "/../git/history.txt");
+    file.open(QIODevice::ReadWrite);
     QTextStream out(&file);
     while (!out.atEnd()) {
         line = out.readLine();
