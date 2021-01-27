@@ -5,7 +5,7 @@ mainWindow::mainWindow() : QMainWindow() {
     addWindowActions();
     addWindowMenu();
     addCentralWindow();
-    setWindowIcon(QIcon(QApplication::applicationDirPath() + "/../git/img/chrome-icon-window.png"));
+    setWindowIcon(QIcon("/usr/share/qt-application/img/chrome-icon-window.png"));
     setWindowTitle("Chrome");
 }
 
@@ -13,28 +13,28 @@ void mainWindow::addWindowActions() {
     // set button on tool bar
     w_previous = new QAction(tr("Previous"));
     w_previous->setToolTip(tr("click to go back"));
-    w_previous->setIcon(QIcon(QApplication::applicationDirPath() + "/../git/img/left-arrow.png"));
+    w_previous->setIcon(QIcon("/usr/share/qt-application/img/left-arrow.png"));
     w_next = new QAction(tr("Next"));
     w_next->setToolTip(tr("click to go foward"));
-    w_next->setIcon(QIcon(QApplication::applicationDirPath() + "/../git/img/right-arrow.png"));
+    w_next->setIcon(QIcon("/usr/share/qt-application/img/right-arrow.png"));
     w_stop = new QAction(tr("Stop"));
     w_stop->setToolTip(tr("click to stop loading page"));
-    w_stop->setIcon(QIcon(QApplication::applicationDirPath() + "/../git/img/stop.png"));
+    w_stop->setIcon(QIcon("/usr/share/qt-application/img/stop.png"));
     w_refresh = new QAction(tr("Refresh"));
     w_refresh->setToolTip(tr("click to refresh page"));
-    w_refresh->setIcon(QIcon(QApplication::applicationDirPath() + "/../git/img/refresh.png"));
+    w_refresh->setIcon(QIcon("/usr/share/qt-application/img/refresh.png"));
     w_home = new QAction(tr("Home"));
     w_home->setToolTip(tr("click to return home page"));
-    w_home->setIcon(QIcon(QApplication::applicationDirPath() + "/../git/img/home.png"));
+    w_home->setIcon(QIcon("/usr/share/qt-application/img/home.png"));
     w_changeTab = new QAction(tr("Change tab"));
     w_changeTab->setToolTip(tr("click to change tab"));
-    w_changeTab->setIcon(QIcon(QApplication::applicationDirPath() + "/../git/img/next.png"));
+    w_changeTab->setIcon(QIcon("/usr/share/qt-application/img/next.png"));
     openFindText = new QAction(tr("Find text"));
     openFindText->setToolTip(tr("Find bar"));
     openFindText->setShortcut(QKeySequence(tr("Ctrl+F")));
     // set search bar on tool bar
     searchBar = new QLineEdit();
-    searchBar->addAction(QIcon(QApplication::applicationDirPath() + "/../git/img/google.png"), QLineEdit::LeadingPosition);
+    searchBar->addAction(QIcon("/usr/share/qt-application/img/google.png"), QLineEdit::LeadingPosition);
     searchBar->setLayoutDirection(Qt::LeftToRight);
 
     // set up tool bar
@@ -72,7 +72,7 @@ void mainWindow::addWindowMenu() {
     ActionsMenu->addAction(w_changeTab);
     ActionsMenu->addAction(openFindText);
     // help menu
-    helpAction = new QAction(QIcon(QApplication::applicationDirPath() + "/../git/img/questionMark.png"), tr("About Browser Clone..."));
+    helpAction = new QAction(QIcon("/usr/share/qt-application/img/questionMark.png"), tr("About Browser Clone..."));
     helpMenu->addAction(helpAction);
     // add connection for menu bar
     connect(exitAction, SIGNAL(triggered(bool)), qApp, SLOT(quit()));

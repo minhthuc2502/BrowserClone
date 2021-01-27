@@ -11,7 +11,7 @@ void history::addHistory(const QWebView *current_webview) {
     QWebHistoryItem historyItem = current_webview->history()->currentItem();
     QString url = historyItem.url().toString();
     QString line;
-    QFile file(QApplication::applicationDirPath() + "/../git/history.txt");
+    QFile file("/usr/share/qt-application/history.txt");
     file.open(QIODevice::ReadWrite);
     QTextStream out(&file);
     while (!out.atEnd()) {
@@ -30,7 +30,7 @@ void history::addHistory(const QWebView *current_webview) {
 
 void history::showHistory() {
     historyList->clear();
-    QFile file(QApplication::applicationDirPath() + "/../BrowserClone/history.txt");
+    QFile file("/usr/share/qt-application/history.txt");
     file.open(QIODevice::ReadOnly);
     QTextStream in(&file);
     while (!in.atEnd()) {
@@ -46,7 +46,7 @@ void history::showHistory() {
 }
 
 void history::removeHistory() {
-    QFile file(QApplication::applicationDirPath() + "/../BrowserClone/history.txt");
+    QFile file("/usr/share/qt-application/history.txt");
     file.open(QFile::WriteOnly|QFile::Truncate);
     file.close();
     // Show on web
@@ -59,7 +59,7 @@ QListWidget* history::getHistoryList() {
 }
 
 void history::refreshHistoryPage() {
-    QFile file(QApplication::applicationDirPath() + "/../BrowserClone/history.txt");
+    QFile file("/usr/share/qt-application/history.txt");
     file.open(QIODevice::ReadOnly);
     QTextStream in(&file);
     historyList->clear();
